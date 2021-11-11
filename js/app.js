@@ -22,6 +22,7 @@ window.onload = function () {
             const fileList = fileElem.files;
             if (fileList.length > 0) {
                 getId3s(fileList);
+                loadAudios(fileList)
             }
         },
         false
@@ -59,13 +60,36 @@ function getId3(file) {
             || typeof data.frame === "undefined") { return; }
         console.log(data);
         // addListItem("playlist", data.frame.title);
-        addTableRow("playlist", [data.frame.artist, data.frame.album, data.frame.track, data.frame.title]);
+        addTableRow("playlist-table", [data.frame.artist, data.frame.album, data.frame.track, data.frame.title]);
     }).bind(this));
 }
 
 function getId3s(fileList) {
     Array.from(fileList).forEach(function (file) {
         getId3(file);
+    });
+}
+
+// TODO
+function loadAudio(file) {
+    console.log("file", file);
+    var reader = new FileReader();
+    reader.addEventListener('load', function () {
+        var data = reader.result;
+        console.log("file.name", file.name);
+        player = new Player({
+            title: file.name,
+            src: data,
+            format: file.name.split('.').pop().toLowerCase(),
+            howl: null
+        });
+    });
+    reader.readAsDataURL(file);
+}
+
+function loadAudios(fileList) {
+    Array.from(fileList).forEach(function (file) {
+        loadAudio(file);
     });
 }
 
