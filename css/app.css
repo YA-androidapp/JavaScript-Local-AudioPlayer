@@ -1,0 +1,10 @@
+label#files-label {
+    color: white;  
+    background-color: aquamarine;
+    padding: 6px;
+    border-radius: 6px;
+  }
+
+input#files {
+    display: none;
+}

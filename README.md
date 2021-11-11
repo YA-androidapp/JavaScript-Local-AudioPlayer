@@ -1,2 +1,9 @@
-# JavaScript-Local-AudioPlayer
- ローカルにあるMP3ファイルを再生するオーディオプレーヤー
+# Matsugaya
+
+---
+
+ローカルにあるMP3ファイルを再生するオーディオプレーヤー
+
+---
+
+Copyright (c) 2021 YA-androidapp(https://github.com/YA-androidapp) All rights reserved.
