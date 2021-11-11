@@ -1,27 +1,55 @@
-var fileelem = document.querySelector("[type='file']");
+window.onload = function () {
+    // 初期化
 
-fileelem.addEventListener(
-    "change",
-    function () {
-        const fileList = this.files;
-        console.log(fileList);
+    let fileElem = document.querySelector("[type='file']");
+    let okElem = document.getElementById("modal-ok");
 
-        if (fileList.length > 0) {
-            updateSize(fileList);
-            getId3s(fileList);
-        }
-    },
-    false
-);
+    fileElem.addEventListener(
+        "change",
+        function () {
+            const fileList = this.files;
+            if (fileList.length > 0) {
+                updateSize(fileList);
+            }
+        },
+        false
+    );
+
+    okElem.addEventListener(
+        "click",
+        function () {
+            let fileElem = document.querySelector("[type='file']");
+            const fileList = fileElem.files;
+            if (fileList.length > 0) {
+                getId3s(fileList);
+            }
+        },
+        false
+    );
+};
 
 function trimnullchar(str) {
     return str.replace(/\0.*$/g, '')
 }
 
-function getId3s(fileList) {
-    Array.from(fileList).forEach(function (file) {
-        getId3(file);
-    });
+function addTableRow(tableId, items) {
+    var tableElem = document.getElementById(tableId);
+    let ncol = 4;
+    var trElem = document.createElement('tr');
+    for (var i = 0; i < ncol; i++) {
+        var tdElem = document.createElement('td');
+        tdElem.textContent = items[i];
+        trElem.appendChild(tdElem);
+    }
+    tableElem.appendChild(trElem);
+}
+
+function addListItem(ulId, item) {
+    var ulElem = document.getElementById(ulId);
+    var liElem = document.createElement("li");
+    liElem.className = "list-group-item";
+    liElem.appendChild(document.createTextNode(item));
+    ulElem.appendChild(liElem);
 }
 
 function getId3(file) {
@@ -30,7 +58,15 @@ function getId3(file) {
         if (typeof data.header === "undefined"
             || typeof data.frame === "undefined") { return; }
         console.log(data);
+        // addListItem("playlist", data.frame.title);
+        addTableRow("playlist", [data.frame.artist, data.frame.album, data.frame.track, data.frame.title]);
     }).bind(this));
+}
+
+function getId3s(fileList) {
+    Array.from(fileList).forEach(function (file) {
+        getId3(file);
+    });
 }
 
 // https://developer.mozilla.org/ja/docs/Web/API/File/Using_files_from_web_applications

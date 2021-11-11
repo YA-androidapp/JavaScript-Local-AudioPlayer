@@ -16,19 +16,6 @@
 <body>
 
     <div class="container">
-        <div class="bg-light p-3 p-sm-5 my-4 rounded">
-            <h1 class="display-4">こんにちは!</h1>
-            <p class="lead">これは単純なヒーローユニット、注目のコンテンツや情報に特別な注意を喚起するためのシンプルなジャンボトロンスタイルのコンポーネントです。</p>
-            <hr class="my-4">
-            <p>より大きなコンテナの範囲内でコンテンツに空間をあけるため、文字の体裁と空白ユーティリティクラスを使用している。</p>
-            <a class="btn btn-primary btn-lg" href="#" role="button">もっと学ぼう</a>
-        </div>
-        <h1 class="mt-2">ブランド</h1>
-        <p>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Launch static backdrop modal
-            </button>
-
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -48,13 +35,46 @@
                         合計サイズ: <span id="fileSize">0</span><br>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="modal-cancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="modal-ok">OK</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="bg-light p-3 p-sm-5 my-4 rounded">
+            <h1 class="display-4">こんにちは!</h1>
+            <p class="lead">これは単純なヒーローユニット、注目のコンテンツや情報に特別な注意を喚起するためのシンプルなジャンボトロンスタイルのコンポーネントです。</p>
+            <hr class="my-4">
+            <p>より大きなコンテナの範囲内でコンテンツに空間をあけるため、文字の体裁と空白ユーティリティクラスを使用している。</p>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                accesskey="o">
+                Open MP3 files (<u>O</u>)
+            </button>
+        </div>
+        <h1 class="mt-2">List</h1>
+        <p>
+        <table class="table table-striped">
+            <caption>Playlist</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Artist</th>
+                    <th scope="col">Album</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                </tr>
+            </thead>
+            <tbody id="playlist">
+            </tbody>
+        </table>
         </p>
+        <!--
+        <p>
+        <ul class="list-group list-group-flush">
+        </ul>
+        </p>
+        -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
