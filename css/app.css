@@ -1,24 +1,29 @@
-label#files-label {
-    color: white;  
-    background-color: aquamarine;
-    padding: 6px;
-    border-radius: 6px;
-  }
-
-input#files {
-    display: none;
-}
-
-#drop-area {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid gray;
-  width: 300px;
-  height: 200px;
-  cursor: pointer;
-}
-
 audio {
   width: 300px;
+}
+
+div#drop-area {
+  align-items: center;
+  border: 1px solid gray;
+  cursor: pointer;
+  display: flex;
+  height: 200px;
+  justify-content: center;
+  margin: 30px;
+}
+
+input#files {
+  display: none;
+}
+
+label#files-label {
+  background-color: aquamarine;
+  border-radius: 6px;
+  color: white;  
+  margin: 20px;
+  padding: 6px;
+}
+
+th.player-col {
+  width: 330px;
 }
