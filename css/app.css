@@ -8,3 +8,17 @@ label#files-label {
 input#files {
     display: none;
 }
+
+#drop-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid gray;
+  width: 300px;
+  height: 200px;
+  cursor: pointer;
+}
+
+audio {
+  width: 300px;
+}

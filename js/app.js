@@ -1,44 +1,61 @@
 window.onload = function () {
     // 初期化
 
-    let fileElem = document.querySelector("[type='file']");
+    let cancelElem = document.getElementById("modal-cancel");
+    let closeElem = document.getElementById("modal-close");
+    let dropArea = document.getElementById("drop-area");
+    let fileElem = document.getElementById("files");
     let okElem = document.getElementById("modal-ok");
 
-    fileElem.addEventListener(
-        "change",
-        function () {
-            const fileList = this.files;
-            if (fileList.length > 0) {
-                updateSize(fileList);
-            }
-        },
-        false
-    );
+    cancelElem.addEventListener("click", () => {
+        clearFiles();
+    });
 
-    okElem.addEventListener(
-        "click",
-        function () {
-            let fileElem = document.querySelector("[type='file']");
-            const fileList = fileElem.files;
-            if (fileList.length > 0) {
-                getId3s(fileList);
-                loadAudios(fileList)
-            }
-        },
-        false
-    );
+    closeElem.addEventListener("click", () => {
+        clearFiles();
+    });
+
+    dropArea.addEventListener("click", () => {
+        document.getElementById("files").click();
+    });
+
+    dropArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "copy";
+    });
+
+    dropArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        document.getElementById("files").files = event.dataTransfer.files;
+        updateSize(event.dataTransfer.files);
+    });
+
+    fileElem.addEventListener('change', (event) => {
+        const fileList = event.target.files;
+        if (fileList.length > 0) {
+            updateSize(fileList);
+        }
+    });
+
+    okElem.addEventListener("click", () => {
+        const fileList = document.getElementById("files").files;
+        if (fileList.length > 0) {
+            getId3s(fileList);
+        }
+        clearFiles();
+    });
 };
 
 function trimnullchar(str) {
-    return str.replace(/\0.*$/g, '')
+    return str.replace(/\0.*$/g, "")
 }
 
 function addTableRow(tableId, items) {
     var tableElem = document.getElementById(tableId);
     let ncol = 4;
-    var trElem = document.createElement('tr');
+    var trElem = document.createElement("tr");
     for (var i = 0; i < ncol; i++) {
-        var tdElem = document.createElement('td');
+        var tdElem = document.createElement("td");
         tdElem.textContent = items[i];
         trElem.appendChild(tdElem);
     }
@@ -58,42 +75,18 @@ function getId3(file) {
         if (!data) { return; }
         if (typeof data.header === "undefined"
             || typeof data.frame === "undefined") { return; }
-        console.log(data);
-        // addListItem("playlist", data.frame.title);
         addTableRow("playlist-table", [data.frame.artist, data.frame.album, data.frame.track, data.frame.title]);
     }).bind(this));
 }
 
 function getId3s(fileList) {
     Array.from(fileList).forEach(function (file) {
-        getId3(file);
+        if (file.type.match(/audio\/*/)) {
+            getId3(file);
+        }
     });
 }
 
-// TODO
-function loadAudio(file) {
-    console.log("file", file);
-    var reader = new FileReader();
-    reader.addEventListener('load', function () {
-        var data = reader.result;
-        console.log("file.name", file.name);
-        player = new Player({
-            title: file.name,
-            src: data,
-            format: file.name.split('.').pop().toLowerCase(),
-            howl: null
-        });
-    });
-    reader.readAsDataURL(file);
-}
-
-function loadAudios(fileList) {
-    Array.from(fileList).forEach(function (file) {
-        loadAudio(file);
-    });
-}
-
-// https://developer.mozilla.org/ja/docs/Web/API/File/Using_files_from_web_applications
 function updateSize(fileList) {
     let nBytes = 0,
         oFiles = fileList,
@@ -108,4 +101,10 @@ function updateSize(fileList) {
     }
     document.getElementById("fileNum").innerHTML = nFiles;
     document.getElementById("fileSize").innerHTML = sOutput;
+}
+
+function clearFiles() {
+    document.getElementById("files").value = null;
+    document.getElementById("fileNum").innerHTML = "0";
+    document.getElementById("fileSize").innerHTML = "0";
 }
