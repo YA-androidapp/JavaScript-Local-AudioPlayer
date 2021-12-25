@@ -1,4 +1,4 @@
-window.onload = function () {
+window.addEventListener('DOMContentLoaded', (event) => {
     // 初期化
 
     let cancelElem = document.getElementById("modal-cancel");
@@ -27,24 +27,25 @@ window.onload = function () {
     dropArea.addEventListener("drop", (event) => {
         event.preventDefault();
         document.getElementById("files").files = event.dataTransfer.files;
-        updateSize(event.dataTransfer.files);
+        getMetadata(event.dataTransfer.files);
     });
 
     fileElem.addEventListener('change', (event) => {
         const fileList = event.target.files;
         if (fileList.length > 0) {
-            updateSize(fileList);
+            getMetadata(fileList);
         }
     });
 
     okElem.addEventListener("click", () => {
         const fileList = document.getElementById("files").files;
         if (fileList.length > 0) {
-            getId3s(fileList);
+            loadFiles(fileList);
+            playNext();
         }
         clearFiles();
     });
-};
+});
 
 function addTableRow(tableId, items, file) {
     var tableElem = document.getElementById(tableId);
@@ -72,13 +73,13 @@ function addTableRow(tableId, items, file) {
     tableElem.appendChild(trElem);
 }
 
-function clearFiles() {
+const clearFiles = () => {
     document.getElementById("files").value = null;
     document.getElementById("fileNum").innerHTML = "0";
     document.getElementById("fileSize").innerHTML = "0";
 }
 
-function getId3(file) {
+const getId3 = (file) => {
     new id3().read(file, (function (data) {
         if (!data) { return; }
         if (typeof data.header === "undefined"
@@ -87,7 +88,7 @@ function getId3(file) {
     }).bind(this));
 }
 
-function getId3s(fileList) {
+const loadFiles = (fileList) => {
     Array.from(fileList).forEach(function (file) {
         if (file.type.match(/audio\/*/)) {
             getId3(file);
@@ -95,11 +96,11 @@ function getId3s(fileList) {
     });
 }
 
-function trimnullchar(str) {
+const trimnullchar = (str) => {
     return str.replace(/\0.*$/g, "")
 }
 
-function updateSize(fileList) {
+const getMetadata = (fileList) => {
     let nBytes = 0,
         oFiles = fileList,
         nFiles = oFiles.length;
