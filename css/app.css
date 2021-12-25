@@ -27,3 +27,7 @@ label#files-label {
 th.player-col {
   width: 330px;
 }
+
+tr.current:after {
+  content: '♬';
+}

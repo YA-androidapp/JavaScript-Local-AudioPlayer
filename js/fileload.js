@@ -41,18 +41,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
         const fileList = document.getElementById("files").files;
         if (fileList.length > 0) {
             loadFiles(fileList);
-            playNext();
+            setTimeout(() => playForward(), 1000); // DOM変更待ち
         }
         clearFiles();
     });
 });
 
-function addTableRow(tableId, items, file) {
-    var tableElem = document.getElementById(tableId);
+const addTableRow = (tableId, items, file) => {
+    console.log("addTableRow", tableId, items, file);
+    
     let ncol = 4;
-    var trElem = document.createElement("tr");
+    let trElem = document.createElement("tr");
     for (var i = 0; i < ncol; i++) {
-        var tdElem = document.createElement("td");
+        let tdElem = document.createElement("td");
         tdElem.textContent = items[i];
         trElem.appendChild(tdElem);
     }
@@ -65,21 +66,25 @@ function addTableRow(tableId, items, file) {
             audioElem.src = event.target.result;
         }
         reader.readAsDataURL(file);
-        var tdElem = document.createElement("td");
+        let tdElem = document.createElement("td");
         tdElem.appendChild(audioElem);
         trElem.appendChild(tdElem);
     }
 
-    tableElem.appendChild(trElem);
+    document.getElementById(tableId).appendChild(trElem);
 }
 
 const clearFiles = () => {
+    console.log("clearFiles");
+    
     document.getElementById("files").value = null;
     document.getElementById("fileNum").innerHTML = "0";
     document.getElementById("fileSize").innerHTML = "0";
 }
 
 const getId3 = (file) => {
+    console.log("getId3", file);
+    
     new id3().read(file, (function (data) {
         if (!data) { return; }
         if (typeof data.header === "undefined"
@@ -89,6 +94,8 @@ const getId3 = (file) => {
 }
 
 const loadFiles = (fileList) => {
+    console.log("loadFiles", fileList);
+    
     Array.from(fileList).forEach(function (file) {
         if (file.type.match(/audio\/*/)) {
             getId3(file);
@@ -97,10 +104,14 @@ const loadFiles = (fileList) => {
 }
 
 const trimnullchar = (str) => {
+    console.log("trimnullchar", str);
+    
     return str.replace(/\0.*$/g, "")
 }
 
 const getMetadata = (fileList) => {
+    console.log("getMetadata", fileList);
+    
     let nBytes = 0,
         oFiles = fileList,
         nFiles = oFiles.length;
