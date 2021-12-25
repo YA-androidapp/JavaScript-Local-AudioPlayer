@@ -24,10 +24,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
         event.dataTransfer.dropEffect = "copy";
     });
 
-    dropArea.addEventListener("drop", (event) => {
+    dropArea.addEventListener("drop", async (event) => {
         event.preventDefault();
-        document.getElementById("files").files = event.dataTransfer.files;
-        getMetadata(event.dataTransfer.files);
+
+        let fileList = event.dataTransfer.files;
+        document.getElementById("files").files = fileList;
+        getMetadata(fileList);
     });
 
     fileElem.addEventListener('change', (event) => {
@@ -49,7 +51,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 const addTableRow = (tableId, items, file) => {
     console.log("addTableRow", tableId, items, file);
-    
+
     let ncol = 4;
     let trElem = document.createElement("tr");
     for (var i = 0; i < ncol; i++) {
@@ -76,7 +78,7 @@ const addTableRow = (tableId, items, file) => {
 
 const clearFiles = () => {
     console.log("clearFiles");
-    
+
     document.getElementById("files").value = null;
     document.getElementById("fileNum").innerHTML = "0";
     document.getElementById("fileSize").innerHTML = "0";
@@ -84,7 +86,7 @@ const clearFiles = () => {
 
 const getId3 = (file) => {
     console.log("getId3", file);
-    
+
     new id3().read(file, (function (data) {
         if (!data) { return; }
         if (typeof data.header === "undefined"
@@ -95,7 +97,7 @@ const getId3 = (file) => {
 
 const loadFiles = (fileList) => {
     console.log("loadFiles", fileList);
-    
+
     Array.from(fileList).forEach(function (file) {
         if (file.type.match(/audio\/*/)) {
             getId3(file);
@@ -105,13 +107,13 @@ const loadFiles = (fileList) => {
 
 const trimnullchar = (str) => {
     console.log("trimnullchar", str);
-    
+
     return str.replace(/\0.*$/g, "")
 }
 
 const getMetadata = (fileList) => {
     console.log("getMetadata", fileList);
-    
+
     let nBytes = 0,
         oFiles = fileList,
         nFiles = oFiles.length;
