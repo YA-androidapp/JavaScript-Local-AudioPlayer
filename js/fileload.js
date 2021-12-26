@@ -1,3 +1,6 @@
+const WAIT_INTERVAL = 100;
+let dataTransfer = new DataTransfer();
+
 window.addEventListener('DOMContentLoaded', (event) => {
     // 初期化
 
@@ -25,29 +28,107 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
     dropArea.addEventListener("drop", async (event) => {
+        dataTransfer = new DataTransfer();
+
+        let items = event.dataTransfer.items;
+
         event.preventDefault();
 
-        let fileList = event.dataTransfer.files;
-        document.getElementById("files").files = fileList;
-        getMetadata(fileList);
-    });
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i].webkitGetAsEntry();
+
+            if (item) {
+                await scanFiles(item, dataTransfer);
+            }
+        }
+        while (true) {
+            if (dataTransfer.files.length > 0) {
+                waitForFileList(dataTransfer.files);
+                break;
+            }
+            await _sleep(WAIT_INTERVAL);
+        }
+    }, false);
 
     fileElem.addEventListener('change', (event) => {
-        const fileList = event.target.files;
+        const fileList = document.getElementById("files").files;
         if (fileList.length > 0) {
-            getMetadata(fileList);
+            getMetadata();
         }
     });
 
     okElem.addEventListener("click", () => {
-        const fileList = document.getElementById("files").files;
-        if (fileList.length > 0) {
-            loadFiles(fileList);
-            setTimeout(() => playForward(), 1000); // DOM変更待ち
-        }
-        clearFiles();
+        checkAndLoadfiles();
     });
 });
+
+const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const waitForFileList = (fileList) => {
+    document.getElementById("files").files = fileList;
+    checkAndGetMetadata();
+}
+
+const checkAndGetMetadata = () => {
+    console.log("checkAndGetMetadata()");
+    const fileList = document.getElementById("files").files;
+
+    if (fileList && fileList.length > 0) {
+        document.getElementById("files").files = fileList;
+        getMetadata(fileList);
+    } else {
+        setTimeout(() => { checkAndGetMetadata(fileList) }, WAIT_INTERVAL);
+    }
+}
+
+const checkAndPlayForward = () => {
+    playForward();
+    clearFiles();
+}
+
+const checkAndLoadfiles = () => {
+    const fileList = document.getElementById("files").files;
+
+    if (fileList && fileList.length > 0) {
+        loadFiles();
+
+        let playlistItemElems = document.getElementById("playlist-table").getElementsByTagName("tr");
+        if (playlistItemElems.length > 0) {
+            checkAndPlayForward();
+        } else {
+            setTimeout(() => { checkAndPlayForward() }, WAIT_INTERVAL);
+        }
+    } else {
+        setTimeout(() => { checkAndLoadfiles() }, WAIT_INTERVAL);
+    }
+}
+
+const getFile = async (fileEntry) => {
+    try {
+        return await new Promise((resolve, reject) => fileEntry.file(resolve, reject));
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const scanFiles = async (item, dataTransfer) => {
+    console.log("item", item);
+
+    if (item.isDirectory) {
+        console.log("dir", item);
+        let directoryReader = item.createReader();
+        directoryReader.readEntries(function (entries) {
+            entries.forEach(function (entry) {
+                scanFiles(entry, dataTransfer);
+            });
+        });
+    } else if (item.isFile) {
+        let file = await getFile(item);
+        console.log("file", file);
+        dataTransfer.items.add(file);
+        console.log("dataTransfer", dataTransfer);
+    }
+}
 
 const addTableRow = (tableId, items, file) => {
     console.log("addTableRow", tableId, items, file);
@@ -96,8 +177,8 @@ const getId3 = (file) => {
     }).bind(this));
 }
 
-const loadFiles = (fileList) => {
-    console.log("loadFiles", fileList);
+const loadFiles = () => {
+    const fileList = document.getElementById("files").files;
 
     Array.from(fileList).forEach(function (file) {
         if (file.type.match(/audio\/*/)) {
@@ -112,8 +193,8 @@ const trimnullchar = (str) => {
     return str.replace(/\0.*$/g, "")
 }
 
-const getMetadata = (fileList) => {
-    console.log("getMetadata", fileList);
+const getMetadata = () => {
+    const fileList = document.getElementById("files").files;
 
     let nBytes = 0,
         oFiles = fileList,

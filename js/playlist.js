@@ -43,11 +43,15 @@ const playN = (index) => {
 
     let playlistItemElems = document.getElementById("playlist-table").getElementsByTagName("tr");
     let playlistItemElemsArray = [...playlistItemElems];
-    playlistItemElemsArray[index].classList.add(CURRENT_PLAYING_LABEL);
+    if (playlistItemElemsArray && playlistItemElemsArray.length > 0) {
+        console.log("playN playlistItemElemsArray", playlistItemElemsArray);
 
-    var audio = document.getElementById('player');
-    audio.src = document.querySelectorAll('tr.current td audio')[0].src;
-    audio.play();
+        playlistItemElemsArray[index].classList.add(CURRENT_PLAYING_LABEL);
+
+        var audio = document.getElementById('player');
+        audio.src = document.querySelectorAll('tr.current td audio')[0].src;
+        audio.play();
+    }
 };
 
 const playForward = () => {
@@ -67,7 +71,7 @@ const playNext = (isForward = true) => {
 
     let nextIndex = getCurrentIndex() + (isForward ? 1 : -1);
     let playlistItemElems = document.getElementById("playlist-table").getElementsByTagName("tr");
-    
+
     if (nextIndex < 0) {
         nextIndex = playlistItemElems.length - 1;
     } else if (nextIndex >= playlistItemElems.length) {
