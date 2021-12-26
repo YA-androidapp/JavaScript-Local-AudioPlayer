@@ -20,6 +20,16 @@ window.addEventListener("DOMContentLoaded", (event) => {
     });
 });
 
+const playlistOnClick = (e) => {
+    let playlistItemElems = document.getElementById("playlist-table").getElementsByTagName("tr");
+    let playlistCurrentItemElem = e.target.parentNode;
+
+    if (playlistItemElems.length > 0 && playlistCurrentItemElem) {
+        let index = ([].slice.call(playlistItemElems)).indexOf(playlistCurrentItemElem);
+        playN(index);
+    }
+};
+
 const getCurrentIndex = (reverse = false) => {
     console.log("getCurrentItem", reverse);
 

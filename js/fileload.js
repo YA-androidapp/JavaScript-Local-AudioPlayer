@@ -138,6 +138,7 @@ const addTableRow = (tableId, items, file) => {
     for (var i = 0; i < ncol; i++) {
         let tdElem = document.createElement("td");
         tdElem.textContent = items[i];
+        tdElem.onclick = playlistOnClick;
         trElem.appendChild(tdElem);
     }
 
