@@ -62,6 +62,7 @@ const addTableRow = (tableId, items, file) => {
 
     if (file.type.match(/audio\/*/)) {
         const audioElem = document.createElement('audio');
+        audioElem.className = "hidden";
         audioElem.controls = true;
         const reader = new FileReader();
         reader.onload = (event) => {
