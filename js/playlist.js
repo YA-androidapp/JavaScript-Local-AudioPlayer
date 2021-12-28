@@ -1,3 +1,5 @@
+// Copyright (c) 2021 YA-androidapp(https://github.com/YA-androidapp) All rights reserved.
+
 const CURRENT_PLAYING_LABEL = "current";
 
 window.addEventListener("DOMContentLoaded", (event) => {
@@ -58,7 +60,7 @@ const playN = (index) => {
 
         playlistItemElemsArray[index].classList.add(CURRENT_PLAYING_LABEL);
 
-        var audio = document.getElementById('player');
+        let audio = document.getElementById('player');
         audio.src = document.querySelectorAll('tr.current td audio')[0].src;
         audio.play();
     }

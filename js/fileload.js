@@ -1,3 +1,5 @@
+// Copyright (c) 2021 YA-androidapp(https://github.com/YA-androidapp) All rights reserved.
+
 const WAIT_INTERVAL = 100;
 let dataTransfer = new DataTransfer();
 
@@ -46,7 +48,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 waitForFileList(dataTransfer.files);
                 break;
             }
-            await _sleep(WAIT_INTERVAL);
+            await sleepMs(WAIT_INTERVAL);
         }
     }, false);
 
@@ -58,84 +60,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
     okElem.addEventListener("click", () => {
-        checkAndLoadfiles();
+        checkAndLoadFiles();
     });
 });
-
-const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const waitForFileList = (fileList) => {
-    document.getElementById("files").files = fileList;
-    checkAndGetMetadata();
-}
-
-const checkAndGetMetadata = () => {
-    console.log("checkAndGetMetadata()");
-    const fileList = document.getElementById("files").files;
-
-    if (fileList && fileList.length > 0) {
-        document.getElementById("files").files = fileList;
-        getMetadata(fileList);
-    } else {
-        setTimeout(() => { checkAndGetMetadata(fileList) }, WAIT_INTERVAL);
-    }
-}
-
-const checkAndPlayForward = () => {
-    playForward();
-    clearFiles();
-}
-
-const checkAndLoadfiles = () => {
-    const fileList = document.getElementById("files").files;
-
-    if (fileList && fileList.length > 0) {
-        loadFiles();
-
-        let playlistItemElems = document.getElementById("playlist-table").getElementsByTagName("tr");
-        if (playlistItemElems.length > 0) {
-            checkAndPlayForward();
-        } else {
-            setTimeout(() => { checkAndPlayForward() }, WAIT_INTERVAL);
-        }
-    } else {
-        setTimeout(() => { checkAndLoadfiles() }, WAIT_INTERVAL);
-    }
-}
-
-const getFile = async (fileEntry) => {
-    try {
-        return await new Promise((resolve, reject) => fileEntry.file(resolve, reject));
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-const scanFiles = async (item, dataTransfer) => {
-    console.log("item", item);
-
-    if (item.isDirectory) {
-        console.log("dir", item);
-        let directoryReader = item.createReader();
-        directoryReader.readEntries(function (entries) {
-            entries.forEach(function (entry) {
-                scanFiles(entry, dataTransfer);
-            });
-        });
-    } else if (item.isFile) {
-        let file = await getFile(item);
-        console.log("file", file);
-        dataTransfer.items.add(file);
-        console.log("dataTransfer", dataTransfer);
-    }
-}
 
 const addTableRow = (tableId, items, file) => {
     console.log("addTableRow", tableId, items, file);
 
-    let ncol = 4;
+    let nCol = 4;
     let trElem = document.createElement("tr");
-    for (var i = 0; i < ncol; i++) {
+    for (var i = 0; i < nCol; i++) {
         let tdElem = document.createElement("td");
         tdElem.textContent = items[i];
         tdElem.onclick = playlistOnClick;
@@ -159,12 +93,54 @@ const addTableRow = (tableId, items, file) => {
     document.getElementById(tableId).appendChild(trElem);
 }
 
+const checkAndGetMetadata = () => {
+    console.log("checkAndGetMetadata()");
+    const fileList = document.getElementById("files").files;
+
+    if (fileList && fileList.length > 0) {
+        document.getElementById("files").files = fileList;
+        getMetadata(fileList);
+    } else {
+        setTimeout(() => { checkAndGetMetadata(fileList) }, WAIT_INTERVAL);
+    }
+}
+
+const checkAndLoadFiles = () => {
+    const fileList = document.getElementById("files").files;
+
+    if (fileList && fileList.length > 0) {
+        loadFiles();
+
+        let playlistItemElems = document.getElementById("playlist-table").getElementsByTagName("tr");
+        if (playlistItemElems.length > 0) {
+            checkAndPlayForward();
+        } else {
+            setTimeout(() => { checkAndPlayForward() }, WAIT_INTERVAL);
+        }
+    } else {
+        setTimeout(() => { checkAndLoadFiles() }, WAIT_INTERVAL);
+    }
+}
+
+const checkAndPlayForward = () => {
+    playForward();
+    clearFiles();
+}
+
 const clearFiles = () => {
     console.log("clearFiles");
 
     document.getElementById("files").value = null;
     document.getElementById("fileNum").innerHTML = "0";
     document.getElementById("fileSize").innerHTML = "0";
+}
+
+const getFile = async (fileEntry) => {
+    try {
+        return await new Promise((resolve, reject) => fileEntry.file(resolve, reject));
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 const getId3 = (file) => {
@@ -176,22 +152,6 @@ const getId3 = (file) => {
             || typeof data.frame === "undefined") { return; }
         addTableRow("playlist-table", [data.frame.artist, data.frame.album, data.frame.track, data.frame.title], file);
     }).bind(this));
-}
-
-const loadFiles = () => {
-    const fileList = document.getElementById("files").files;
-
-    Array.from(fileList).forEach(function (file) {
-        if (file.type.match(/audio\/*/)) {
-            getId3(file);
-        }
-    });
-}
-
-const trimnullchar = (str) => {
-    console.log("trimnullchar", str);
-
-    return str.replace(/\0.*$/g, "")
 }
 
 const getMetadata = () => {
@@ -210,4 +170,46 @@ const getMetadata = () => {
     }
     document.getElementById("fileNum").innerHTML = nFiles;
     document.getElementById("fileSize").innerHTML = sOutput;
+}
+
+const loadFiles = () => {
+    const fileList = document.getElementById("files").files;
+
+    Array.from(fileList).forEach(function (file) {
+        if (file.type.match(/audio\/*/)) {
+            getId3(file);
+        }
+    });
+}
+
+const scanFiles = async (item, dataTransfer) => {
+    console.log("item", item);
+
+    if (item.isDirectory) {
+        console.log("dir", item);
+        let directoryReader = item.createReader();
+        directoryReader.readEntries(function (entries) {
+            entries.forEach(function (entry) {
+                scanFiles(entry, dataTransfer);
+            });
+        });
+    } else if (item.isFile) {
+        let file = await getFile(item);
+        console.log("file", file);
+        dataTransfer.items.add(file);
+        console.log("dataTransfer", dataTransfer);
+    }
+}
+
+const sleepMs = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const trimNullChar = (str) => {
+    console.log("trimNullChar", str);
+
+    return str.replace(/\0.*$/g, "")
+}
+
+const waitForFileList = (fileList) => {
+    document.getElementById("files").files = fileList;
+    checkAndGetMetadata();
 }

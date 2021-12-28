@@ -1,3 +1,7 @@
+/*
+Copyright (c) 2021 YA-androidapp(https://github.com/YA-androidapp) All rights reserved.
+*/
+
 .hidden {
   display: none;
 }
@@ -23,7 +27,7 @@ input#files {
 label#files-label {
   background-color: aquamarine;
   border-radius: 6px;
-  color: white;  
+  color: white;
   margin: 20px;
   padding: 6px;
 }
