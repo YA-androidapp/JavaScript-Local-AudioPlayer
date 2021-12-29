@@ -5,9 +5,9 @@
   "display": "standalone",
   "name": "ya-androidapp.github",
   "orientation": "any",
-  "scope": "/",
+  "scope": "/JavaScript-Local-AudioPlayer/",
   "short_name": "ya-androidapp.github",
-  "start_url": "/",
+  "start_url": "/JavaScript-Local-AudioPlayer/",
   "theme_color": "#2f3173",
   "icons": [
     {
