@@ -1,13 +1,8 @@
-// This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
+// This is the "Offline page" service worker
 
-const CACHE = "pwabuilder-offline-page";
+importScripts('js/workbox-sw-5.1.2/workbox-sw.js');
 
-importScripts('/JavaScript-Local-AudioPlayer/js/workbox-sw-5.1.2/workbox-sw.js');
-
-workbox.setConfig({
-  modulePathPrefix: '/JavaScript-Local-AudioPlayer/js/workbox-sw-5.1.2/'
-});
-
+const CACHE = "pwabuilder-page";
 
 // TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
 const offlineFallbackPage = "index.html";
@@ -28,13 +23,6 @@ self.addEventListener('install', async (event) => {
 if (workbox.navigationPreload.isSupported()) {
   workbox.navigationPreload.enable();
 }
-
-workbox.routing.registerRoute(
-  new RegExp('/*'),
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE
-  })
-);
 
 self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
