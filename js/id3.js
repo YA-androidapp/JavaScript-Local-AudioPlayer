@@ -104,11 +104,11 @@ id3 = (function () {
                 version: (!data[127]) ? 0 : 1
             },
             frame: {
-                title: trimnullchar(this.v1_str(data.slice(3, 3 + 30))),
-                artist: trimnullchar(this.v1_str(data.slice(33, 33 + 30))),
-                album: trimnullchar(this.v1_str(data.slice(63, 63 + 30))),
+                title: trimNullChar(this.v1_str(data.slice(3, 3 + 30))),
+                artist: trimNullChar(this.v1_str(data.slice(33, 33 + 30))),
+                album: trimNullChar(this.v1_str(data.slice(63, 63 + 30))),
                 year: lib.bin2str(data.slice(93, 93 + 4)),
-                comment: trimnullchar(this.v1_str(data.slice(97, 97 + 30))),
+                comment: trimNullChar(this.v1_str(data.slice(97, 97 + 30))),
                 track: data[126],
                 genre: data[127] && typeof v1_genre[data[127]] !== "undefined" ? v1_genre[data[127]] : data[127]
             }
