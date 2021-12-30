@@ -2,7 +2,12 @@
 
 const CACHE = "pwabuilder-offline-page";
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+importScripts('/JavaScript-Local-AudioPlayer/js/workbox-sw-5.1.2/workbox-sw.js');
+
+workbox.setConfig({
+  modulePathPrefix: '/JavaScript-Local-AudioPlayer/js/workbox-sw-5.1.2/'
+});
+
 
 // TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
 const offlineFallbackPage = "index.html";
